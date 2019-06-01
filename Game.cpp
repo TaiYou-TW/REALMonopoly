@@ -62,7 +62,7 @@ void Game::loadFile(const string &f) {
 }
 void Game::saveFile() const {}
 
-const bool Game::isEnd() const {}
+const bool Game::isEnd() const { return false; }
 const int32_t Game::rollDice() const {
     random_device seed;
     mt19937_64 gen(seed());
@@ -77,12 +77,12 @@ void Game::rollDicePhase() {
     Player &now = playerList[nowPlaying];
 
     // move
-    now.setLoc((now.getLoc += rollDice()) % map.size());
+    //now.setLoc((now.getLoc += rollDice()) % map.size());
 }
 void Game::estatePhase(const string &action) {
     Player &now = playerList[nowPlaying];
 
-    if (map[now.getLoc()].getType < 0) {  // fate or chance
+/*    if (map[now.getLoc()].getType < 0) {  // fate or chance
         fateChancePhase();
     } else {                                     // buy or give tax
         if (map[now.getLoc()].getOwner() > 0) {  // building belongs to a player
@@ -102,7 +102,7 @@ void Game::estatePhase(const string &action) {
                 now.setDeposit(now.getDeposit() - map[now.getLoc()].getPrice());
             }
         }
-    }
+    }*/
 }
 void Game::fateChancePhase() {}
 

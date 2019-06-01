@@ -48,7 +48,7 @@ bool gameMenuOpen = false;
 bool holdChess = false;
 int mainMenuPosition = 0;
 int gameMenuPosition = 0;
-const string mainMenuText[3] = { "開新遊戲", "讀取存檔", "離開遊戲" };
+const string mainMenuText[4] = { "開新遊戲", "讀取存檔", "關於我們" , "離開遊戲" };
 
 
 DWORD getKey()
@@ -66,24 +66,23 @@ void GoToXY(int column, int line)
 	COORD coord;
 	coord.X = column;
 	coord.Y = line;
-
 	if (!SetConsoleCursorPosition(hConsole, coord))
 	{
 		cout << "移動游標error";
 	}
 }
-void colorMainMenuCursor()
+void colorMainMenuCursor(int y)
 { // color menu's cursor
 	SetConsoleTextAttribute(hConsole, MainMenuLineColor);
-	for (int i = MainMenuTextInitY, j = 0; i <= MainMenuTextInitY + 4; i += 2, j++)
+	for (int i = MainMenuTextInitY, j = 0; i <= MainMenuTextInitY + 6; i += 2, j++)
 	{
 		GoToXY(MainMenuTextInitX, i);
 		cout << mainMenuText[j];
 	}
 
 	SetConsoleTextAttribute(hConsole, MainMenuChoosenColor);
-	GoToXY(MainMenuTextInitX, MainMenuTextInitY + mainMenuPosition * 2);
-	cout << mainMenuText[mainMenuPosition];
+	GoToXY(MainMenuTextInitX, MainMenuTextInitY + y * 2);
+	cout << mainMenuText[y];
 	GoToXY(0, WindowBottomY);
 }
 void init()
@@ -139,6 +138,7 @@ void drawMainMenu()
 		cout << "　";
 
 	cout << "├─────┤\n";
+
 	for (int i = 0; i < space; i++)
 		cout << "　";
 
@@ -146,49 +146,69 @@ void drawMainMenu()
 	for (int i = 0; i < space; i++)
 		cout << "　";
 
+	cout << "├─────┤\n";
+	for (int i = 0; i < space; i++)
+		cout << "　";
+
+	cout << "│ " << mainMenuText[3] << " │\n";
+	for (int i = 0; i < space; i++)
+		cout << "　";
+
 	cout << "└─────┘\n";
 	for (int i = 0; i < blank_row; i++)
 		cout << "\n";
-	colorMainMenuCursor();
 }
 #define mainMenuChose 4
 int main() 
 {
-	bool gameRuning = 0, mainMenuRuning = 1, gameMenuRuning = 0;
+	static	int coordChose[2] = { 0 };  //coordcChose[0] = X, coordcChose[1] = Y
+	bool gameRunning = 0, mainMenuRunning = 1, gameMenuRunning = 0;
 	init();
 	initCmdWindow();
 	drawMainMenu();
-	static	int coordChose[2] = { 0 };
+	colorMainMenuCursor(0);
 	while (true)
 	{
 		int keydown = getKey();
-		if (mainMenuRuning = 1)
+		if (mainMenuRunning)
 		{
 			if (keydown == UpArrowKey)
 			{
-				coordChose[0] -=1;
-				if (coordChose[0] < 0)
+				coordChose[1] --;
+				if (coordChose[1] < 0)
 				{
-					coordChose[0] += mainMenuChose;
+					coordChose[1] = mainMenuChose - 1;
 				}
+				colorMainMenuCursor(coordChose[1]);
 			}
 			else if (keydown == DownArrowKey)
 			{
-				coordChose[0] -= 1;
-				coordChose[0] %= mainMenuChose;
+				coordChose[1] ++;
+				coordChose[1] %= mainMenuChose;
+				colorMainMenuCursor(coordChose[1]);
 			}
 			else if (keydown == EnterKey)
 			{
-				//呼叫太陽的FUNTION
+				/*switch (int) {
+				case 符合數字或字元:
+					陳述句一;
+					break;
+				case 符合數字或字元:
+					陳述句二;
+					break;
+				default:
+					陳述三;
+				}*/
+
 				coordChose[0] = 0;
 				coordChose[1] = 0;
 			}
 		}
-		else if (gameMenuRuning = 1)
+		else if (gameMenuRunning)
 		{
 			if (keydown == LeftArrowKey)
 			{
-
+			 	
 			}
 			else if (keydown == RightArrowKey)
 			{
@@ -201,7 +221,7 @@ int main()
 				coordChose[1] = 0;
 			}
 		}
-		else if (gameRuning = 1)
+		else if (gameRunning)
 		{
 			if (keydown == LeftArrowKey)
 			{
